@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea20057144c14ef49bedb032232b9bb5, type: 3}
   m_Name: ItemData
   m_EditorClassIdentifier: 
+  sheetName: ItemData
   sheetId: 1OyaS1c8GQZpw9EoM_mdQPVyLBMq8rBwcFTksuulCw50
   gridId: 0
   itemData:

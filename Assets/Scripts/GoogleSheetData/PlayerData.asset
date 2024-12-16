@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d285fca4c4bec5c468a4612a4e923289, type: 3}
   m_Name: PlayerData
   m_EditorClassIdentifier: 
+  sheetName: PlayerData
   sheetId: 1ENtp3rujwdIYVMqojLq7IhYFkCRLT8AxwVqCUfn5qM4
   gridId: 0
   playerData:
