@@ -1,0 +1,4 @@
+Order,Name,HP,MissedChance
+1,easy,50,50
+2,normal,60,30
+3,hard,70,15

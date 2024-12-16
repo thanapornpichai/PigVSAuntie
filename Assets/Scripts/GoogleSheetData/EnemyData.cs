@@ -6,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyData", menuName = "Config/EnemyData")]
 public class EnemyData : ScriptableObject
 {
+    public string sheetName;
     public string sheetId;
     public string gridId;
 
@@ -14,17 +15,17 @@ public class EnemyData : ScriptableObject
     [ContextMenu("Sync")]
     private void Sync()
     {
-        ReadGoogleSheets.FillData<EnemyConfig>(sheetId, gridId, list =>
+        ReadGoogleOffline.FillData<EnemyConfig>(sheetName, gridId, list =>
         {
             enemyData = list;
-            ReadGoogleSheets.SetDirty(this);
+            ReadGoogleOffline.SetDirty(this);
         });
     }
 
     [ContextMenu("OpenSheet")]
     private void Open()
     {
-        ReadGoogleSheets.OpenUrl(sheetId, gridId);
+        ReadGoogleOffline.OpenUrl(sheetId, gridId);
     }
 
 }

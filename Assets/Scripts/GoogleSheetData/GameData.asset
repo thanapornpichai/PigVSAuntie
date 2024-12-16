@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f1fa7d702282e4dabc35de2bf9e7b8, type: 3}
   m_Name: GameData
   m_EditorClassIdentifier: 
+  sheetName: GameData
   sheetId: 1VYEIUi2Ws8Y1VEJRFTsCfJMoI8IDjGex55F3zh4K79Y
   gridId: 0
   gameData:

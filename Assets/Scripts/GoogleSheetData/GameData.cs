@@ -6,6 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameData", menuName = "Config/GameData")]
 public class GameData : ScriptableObject
 {
+    public string sheetName;
     public string sheetId;
     public string gridId;
 
@@ -14,17 +15,17 @@ public class GameData : ScriptableObject
     [ContextMenu("Sync")]
     private void Sync()
     {
-        ReadGoogleSheets.FillData<DataConfig>(sheetId, gridId, list =>
+        ReadGoogleOffline.FillData<DataConfig>(sheetName, gridId, list =>
         {
             gameData = list;
-            ReadGoogleSheets.SetDirty(this);
+            ReadGoogleOffline.SetDirty(this);
         });
     }
 
     [ContextMenu("OpenSheet")]
     private void Open()
     {
-        ReadGoogleSheets.OpenUrl(sheetId, gridId);
+        ReadGoogleOffline.OpenUrl(sheetId, gridId);
     }
 
 }

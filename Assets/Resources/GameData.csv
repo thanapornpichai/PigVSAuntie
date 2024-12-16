@@ -1,0 +1,5 @@
+Order,Name,Value
+1,TimeToThink,30
+2,TimeToWarning,10
+3,WindForceMin,1
+4,WindForceMax,2
