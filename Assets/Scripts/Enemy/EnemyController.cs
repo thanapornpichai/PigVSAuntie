@@ -10,9 +10,10 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private EnemyData enemyData;
     [SerializeField] private ItemData itemData;
     [SerializeField] private GameObject player1ShootBtn;
+    [SerializeField] private ShowTurnController showTurn;
     [SerializeField]
     private List<GameObject> enemyItemsButtons;
-    private bool isShooting = false;
+    private bool isShooting = false, isDoubleAttack = false;
     private int missedChance, doubleAttackNum, powerThrowNum;
 
     private void Start()
@@ -81,20 +82,28 @@ public class EnemyController : MonoBehaviour
     {
         if (playerControllerPlayer.isDoubleAttacking)
         {
-            yield return new WaitForSeconds(4f);
+            yield return new WaitForSeconds(7f);
         }
         else
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(5f);
         }
-        
-        float chargeForce = CalculateChargeForce();
-        playerControllerSelf.chargeForce = chargeForce;
-        playerControllerSelf.ShootProjectile();
 
-        isShooting = false;
-        yield return new WaitForSeconds(2f);
-        player1ShootBtn.SetActive(true);
+        if (!gamePlayManager.endGame)
+        {
+            StartCoroutine(showTurn.ShowPigTurn());
+            float chargeForce = CalculateChargeForce();
+            playerControllerSelf.chargeForce = chargeForce;
+            playerControllerSelf.ShootProjectile();
+
+            isShooting = false;
+            yield return new WaitForSeconds(2f);
+            player1ShootBtn.SetActive(true);
+            if (!isDoubleAttack)
+            {
+                StartCoroutine(showTurn.ShowAuntieTurn());
+            }
+        }
     }
 
     private float CalculateChargeForce()
@@ -103,49 +112,23 @@ public class EnemyController : MonoBehaviour
 
         if (playerControllerSelf.isWindRight)
         {
-            if (playerControllerSelf.windForce >= 1f && playerControllerSelf.windForce < 1.5f)
-            {
-                chargeForce = 7f;
-            }
-            else if (playerControllerSelf.windForce >= 1.5f && playerControllerSelf.windForce < 1.7f)
-            {
-                chargeForce = 5f;
-            }
-            else if (playerControllerSelf.windForce >= 1.7f && playerControllerSelf.windForce < 1.9f)
-            {
-                chargeForce = 4.5f;
-            }
-            else if (playerControllerSelf.windForce >= 1.9f && playerControllerSelf.windForce <= 2f)
-            {
-                chargeForce = 4f;
-            }
-            else
-            {
-                chargeForce = 0f;
-            }
+            if (playerControllerSelf.windForce <= 1f) chargeForce = 7.5f;
+            else if (playerControllerSelf.windForce <= 1.1f) chargeForce = 7f;
+            else if (playerControllerSelf.windForce <= 1.2f) chargeForce = 6f;
+            else if (playerControllerSelf.windForce <= 1.3f) chargeForce = 5.5f;
+            else if (playerControllerSelf.windForce <= 1.5f) chargeForce = 5f;
+            else if (playerControllerSelf.windForce <= 1.7f) chargeForce = 4.5f;
+            else if (playerControllerSelf.windForce <= 1.9f) chargeForce = 4;
+            else chargeForce = 3.5f;
         }
         else
         {
-            if (playerControllerSelf.windForce >= 1f && playerControllerSelf.windForce < 1.2f)
-            {
-                chargeForce = 9f;
-            }
-            else if (playerControllerSelf.windForce >= 1.2f && playerControllerSelf.windForce < 1.5f)
-            {
-                chargeForce = 11f;
-            }
-            else if (playerControllerSelf.windForce >= 1.5f && playerControllerSelf.windForce < 1.7f)
-            {
-                chargeForce = 13f;
-            }
-            else if (playerControllerSelf.windForce >= 1.7f && playerControllerSelf.windForce <= 2f)
-            {
-                chargeForce = 15f;
-            }
-            else
-            {
-                chargeForce = 0f;
-            }
+            if (playerControllerSelf.windForce <= 1f) chargeForce = 7.5f;
+            else if (playerControllerSelf.windForce <= 1.01f) chargeForce = 8f;
+            else if (playerControllerSelf.windForce <= 1.02f) chargeForce = 9f;
+            else if (playerControllerSelf.windForce <= 1.05f) chargeForce = 10f;
+            else if (playerControllerSelf.windForce <= 1.1f) chargeForce = 11f;
+            else chargeForce = 11f;
         }
 
         if (CheckMissChance())
@@ -174,6 +157,7 @@ public class EnemyController : MonoBehaviour
             {
                 if (doubleAttackNum > 0)
                 {
+                    isDoubleAttack = true;
                     StartCoroutine(EnemyUseDoubleAttack());
                     doubleAttackNum--;
                 }
@@ -184,6 +168,7 @@ public class EnemyController : MonoBehaviour
                 {
                     if (doubleAttackNum > 0)
                     {
+                        isDoubleAttack = true;
                         StartCoroutine(EnemyUseDoubleAttack());
                         doubleAttackNum--;
                     }
@@ -203,9 +188,18 @@ public class EnemyController : MonoBehaviour
     private IEnumerator EnemyUseDoubleAttack()
     {
         playerControllerSelf.UseDoubleAttack();
-        yield return new WaitForSeconds(4.1f);
+        if (playerControllerPlayer.isDoubleAttacking)
+        {
+            yield return new WaitForSeconds(9.01f);
+        }
+        else
+        {
+            yield return new WaitForSeconds(7.01f);
+        }
         player1ShootBtn.SetActive(false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(4f);
+        isDoubleAttack = false;
+        StartCoroutine(showTurn.ShowAuntieTurn());
         player1ShootBtn.SetActive(true);
     }
 }

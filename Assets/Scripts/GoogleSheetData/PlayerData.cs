@@ -39,5 +39,6 @@ public class PlayerConfig
     public int MaxPower;
     public int NormalAttack;
     public int SmallAttack;
+    public float ChargeSpeed;
 }
 ;

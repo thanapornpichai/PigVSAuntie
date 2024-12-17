@@ -22,3 +22,4 @@ MonoBehaviour:
     MaxPower: 15
     NormalAttack: 8
     SmallAttack: 5
+    ChargeSpeed: 1.2
