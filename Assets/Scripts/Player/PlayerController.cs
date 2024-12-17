@@ -23,6 +23,7 @@ public class PlayerController : MonoBehaviour
 
     public float chargeForce;
     private float savedchargeForce;
+    private float chargeSpeed;
     public bool isCharging = false;
     private bool isDoubleAttackActive = false;
     public bool isDoubleAttacking = false;
@@ -31,6 +32,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private HPBarController hpBarController;
     [SerializeField] private PlayerData playerData;
     [SerializeField] private ItemData itemData;
+    [SerializeField] private ShowTurnController showTurn;
 
     public GameObject currentProjectilePrefab;
     public GameObject opponentShootButton;
@@ -75,6 +77,7 @@ public class PlayerController : MonoBehaviour
         maxForce = player.MaxPower;
         normalDamage = player.NormalAttack;
         smallDamage = player.SmallAttack;
+        chargeSpeed = player.ChargeSpeed;
     }
 
     private void SetItemData()
@@ -91,6 +94,7 @@ public class PlayerController : MonoBehaviour
             isCharging = true;
             chargeForce += Time.deltaTime * 10f;
             chargeForce = Mathf.Clamp(chargeForce, minForce, maxForce);
+
         }
     }
 
@@ -111,8 +115,16 @@ public class PlayerController : MonoBehaviour
     private IEnumerator SetButtonNextTurn()
     {
         opponentShootButton.SetActive(false);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(5f);
         opponentShootButton.SetActive(true);
+        if (isPlayer1)
+        {
+            StartCoroutine(showTurn.ShowPigTurn());
+        }
+        else
+        {
+            StartCoroutine(showTurn.ShowAuntieTurn());
+        }
     }
 
     public void ShootProjectile()
@@ -122,10 +134,22 @@ public class PlayerController : MonoBehaviour
 
         if (rb != null)
         {
-            Vector2 baseDirection = shootPoint.right + shootPoint.up * 1.5f;
-            Vector2 shootDirection = isPlayer1 ? new Vector2(-baseDirection.x, baseDirection.y).normalized : baseDirection.normalized;
+            Vector2 baseDirection = (shootPoint.right + shootPoint.up * 2f).normalized * chargeSpeed;
+            Vector2 shootDirection = isPlayer1 ? new Vector2(-baseDirection.x, baseDirection.y) : baseDirection;
 
-            Vector2 totalForce = shootDirection * chargeForce;
+            float adjustedChargeForce = chargeForce;
+
+            if (chargeForce > 7.5f)
+            {
+                float low = 7.5f;
+                float high = 15f;
+                float min = 7.5f;
+                float max = 9f;
+
+                adjustedChargeForce = Mathf.Lerp(min, max, (chargeForce - low) / (high - low));
+            }
+
+            Vector2 totalForce = shootDirection * adjustedChargeForce;
 
             if (isWindRight)
             {
@@ -149,6 +173,7 @@ public class PlayerController : MonoBehaviour
                     totalForce /= (windForce / 1.5f);
                 }
             }
+
             savedchargeForce = chargeForce;
             savedWindForce = windForce;
             savedIsWindRight = isWindRight;
@@ -196,10 +221,22 @@ public class PlayerController : MonoBehaviour
 
         if (rb != null)
         {
-            Vector2 baseDirection = shootPoint.right + shootPoint.up * 1.5f;
-            Vector2 shootDirection = isPlayer1 ? new Vector2(-baseDirection.x, baseDirection.y).normalized : baseDirection.normalized;
+            Vector2 baseDirection = (shootPoint.right + shootPoint.up * 2f).normalized * chargeSpeed;
+            Vector2 shootDirection = isPlayer1 ? new Vector2(-baseDirection.x, baseDirection.y) : baseDirection;
 
-            Vector2 totalForce = shootDirection * savedchargeForce;
+            float adjustedChargeForce = savedchargeForce;
+
+            if (savedchargeForce > 7.5f)
+            {
+                float low = 7.5f;
+                float high = 15f;
+                float min = 7.5f;
+                float max = 9f;
+
+                adjustedChargeForce = Mathf.Lerp(min, max, (savedchargeForce - low) / (high - low));
+            }
+
+            Vector2 totalForce = shootDirection * adjustedChargeForce;
 
             if (savedIsWindRight)
             {
@@ -229,11 +266,19 @@ public class PlayerController : MonoBehaviour
 
         chargeForce = 0f;
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(4f);
 
         if (opponentShootButton != null && !gamePlayManager.isSinglePlayer)
         {
             opponentShootButton.SetActive(true);
+            if (isPlayer1)
+            {
+                StartCoroutine(showTurn.ShowPigTurn());
+            }
+            else
+            {
+                StartCoroutine(showTurn.ShowAuntieTurn());
+            }
         }
 
         isDoubleAttacking = false;
@@ -258,6 +303,15 @@ public class PlayerController : MonoBehaviour
         }
 
         gamePlayManager.PlayerHeal();
+
+        if (isPlayer1)
+        {
+            StartCoroutine(showTurn.ShowPigTurn());
+        }
+        else
+        {
+            StartCoroutine(showTurn.ShowAuntieTurn());
+        }
 
         EndTurn();
     }

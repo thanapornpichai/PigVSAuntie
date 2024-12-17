@@ -50,7 +50,7 @@ MonoBehaviour:
     fileType: 1
     url: https://docs.google.com/spreadsheets/export?format=csv&id=1ENtp3rujwdIYVMqojLq7IhYFkCRLT8AxwVqCUfn5qM4
     filePath: Assets/Resources/PlayerData.csv
-    lastFileHash: e91603b53a3c546da5fd033a3962e703
+    lastFileHash: e8a494b1e9b5f8219d29e9520968eab2
     label: 
     assetReference: {fileID: 4900000, guid: 50893bf2af5c7a0468211d04783f6e9b, type: 3}
   - m_ID: 9

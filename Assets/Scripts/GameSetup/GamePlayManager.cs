@@ -13,7 +13,8 @@ public class GamePlayManager : MonoBehaviour
     private float turnTime;
     private float countdownTimer, countTimer;
     public float winforceMin, winforceMax;
-    private bool turnEnded = false, endGame = false;
+    public bool endGame = false;
+    private bool turnEnded = false;
     private const string ReplayKey = "IsReplay";
 
     [SerializeField] private TMP_Text playerTurnTxt,playerWinTxt,playerTimeTxt;
@@ -30,7 +31,7 @@ public class GamePlayManager : MonoBehaviour
     [SerializeField] private AudioController audioController;
     [SerializeField] private GameData gameData;
 
-    private float windForce;
+    private float windForce,randomWindForce;
     private bool isWindRight;
 
     void Start()
@@ -100,15 +101,35 @@ public class GamePlayManager : MonoBehaviour
         turnEnded = false;
         countdownTimer = turnTime;
 
-        windForce = Random.Range(winforceMin, winforceMax);
+        randomWindForce = Mathf.Round(Random.Range(winforceMin, winforceMax) * 10f) / 10f;
         isWindRight = Random.value > 0.5f;
 
+        if (isPlayer1Turn && isWindRight || !isPlayer1Turn && !isWindRight)
+        {
+            float adjustedWindForce = randomWindForce;
+
+            if (randomWindForce > 1f)
+            {
+                float low = 1f;
+                float high = 2f;
+                float min = 1f;
+                float max = 1.1f;
+
+                adjustedWindForce = Mathf.Lerp(min, max, (randomWindForce - low) / (high - low));
+
+                windForce = adjustedWindForce;
+            }
+        }
+        else
+        {
+            windForce = randomWindForce;
+        }
         player1PlayerController.SetWindForce(windForce);
         player1PlayerController.isWindRight = isWindRight;
         player2PlayerController.SetWindForce(windForce);
         player2PlayerController.isWindRight = isWindRight;
 
-        windBarController.UpdateWindBar(windForce, isWindRight);
+        windBarController.UpdateWindBar(randomWindForce, isWindRight);
 
         player1PlayerController.isTurn = isPlayer1Turn;
         player2PlayerController.isTurn = !isPlayer1Turn;
@@ -165,7 +186,7 @@ public class GamePlayManager : MonoBehaviour
 
     private IEnumerator CheckDamagePlayer1()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.1f);
         if (player2PlayerController.getDamage == false)
         {
                 StartCoroutine(player2PlayerController.MissedHitAnimation());
@@ -174,7 +195,7 @@ public class GamePlayManager : MonoBehaviour
 
     private IEnumerator CheckDamagePlayer2()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(2.1f);
         if (player1PlayerController.getDamage == false)
         {
             StartCoroutine(player1PlayerController.MissedHitAnimation());
